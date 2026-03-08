@@ -22,6 +22,10 @@ local Scripts = {
     },
     ["127380660530951"] = {
         url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E5%9C%A8%E8%B6%85%E5%B8%82%E7%94%9F%E6%B4%BB%E4%B8%80%E5%91%A8.lua",
+        name = "请在游戏内执行" --超市
+    },
+    ["121418861436763"] = {
+        url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E5%9C%A8%E8%B6%85%E5%B8%82%E7%94%9F%E6%B4%BB%E4%B8%80%E5%91%A8.lua",
         name = "在超市生活一周" --已完成
     },
     ["15169316384"] = {
