@@ -12,6 +12,10 @@ local Scripts = {
         url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E8%87%AA%E7%84%B6%E7%81%BE%E5%AE%B3user.lua",
         name = "自然灾害免费版" --已完成
     },
+    ["126509999114328"] = {
+        url = "https://raw.githubusercontent.com/MillJackson832/_/refs/heads/main/%E6%A3%AE%E6%9E%97%E9%87%8C%E7%9A%8499%E5%A4%9C.lua",
+        name = "在森林里的99夜" --已完成
+    },
     ["6137321701"] = {
         url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E6%81%90%E9%AC%BC%E7%97%87(1).lua",
         name = "恐鬼症" --已完成
