@@ -11,7 +11,7 @@ Library.ShowToggleFrameInKeybinds = true
 local Window = Library:CreateWindow({
     Title = "YtttiumHub",
     Footer = "Version: " .. (getgenv().unxshared and getgenv().unxshared.version or "Unknown") .. ", Game: " .. (getgenv().unxshared and getgenv().unxshared.gamename or "Unknown") .. ", Player: " .. (getgenv().unxshared and getgenv().unxshared.playername or "Unknown"),
-    Icon = 73740010358428,
+    Icon = 7374010358428,
     NotifySide = "Right",
     ShowCustomCursor = true,
 })
