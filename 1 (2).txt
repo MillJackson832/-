@@ -21,7 +21,7 @@ local Scripts = {
         name = "俄亥俄州" --已完成
     },
     ["3101667897"] = {
-        url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E5%9C%A8%E8%B6%85%E5%B8%82%E7%94%9F%E6%B4%BB%E4%B8%80%E5%91%A8.lua",
+        url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E6%9E%81%E9%80%9F%E4%BC%A0%E5%A5%87.lua",
         name = "极速传奇" --已完成
     },
     ["127380660530951"] = {
