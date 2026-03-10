@@ -21,7 +21,7 @@ local Scripts = {
         name = "恐鬼症" --已完成
     },
     ["7239319209"] = {
-        url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/P.txt",
+        url = "https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/%E4%BF%84%E4%BA%A5%E4%BF%84%E5%B7%9E.lua",
         name = "俄亥俄州" --已完成
     },
     ["3101667897"] = {
