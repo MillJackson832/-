@@ -6666,42 +6666,74 @@ local AimbotConfig = {
     PredictAim = false,
     PredictValue = 1.5,
     AimPart = "Head",
-    Radius = 200
+    Radius = 200,
+    CheckShield = true,
+    AimMode = "Camera"
 }
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local LocalPlayer = game:GetService("Players").LocalPlayer
+local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
+
+local aimConnection = nil
+
+local function hasShieldProtection(player)
+    if not player or not player.Character then return false end
+    local humanoid = player.Character:FindFirstChild("Humanoid")
+    if not humanoid then return false end
+    for _, desc in pairs(player.Character:GetDescendants()) do
+        if desc:IsA("ForceField") or desc.Name:lower():find("shield") then
+            return true
+        end
+    end
+    return false
+end
 
 local function getNearestTarget()
     local nearest = nil
     local minDist = math.huge
-    local center = Vector2.new(Camera.ViewportSize.X/2,Camera.ViewportSize.Y/2)
-    for _,plr in ipairs(Players:GetPlayers()) do
+    local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+
+    for _, plr in ipairs(Players:GetPlayers()) do
         if plr == LocalPlayer then continue end
+
         local char = plr.Character
         if not char or not char:FindFirstChild(AimbotConfig.AimPart) or not char:FindFirstChild("Humanoid") then continue end
         if char.Humanoid.Health <= 0 then continue end
+
+        if AimbotConfig.CheckShield and hasShieldProtection(plr) then
+            continue
+        end
+
         local worldPos = char[AimbotConfig.AimPart].Position
-        local screenPos,onScreen = Camera:WorldToViewportPoint(worldPos)
-        if not onScreen then continue end
-        local dist = (Vector2.new(screenPos.X,screenPos.Y)-center).Magnitude
-        if dist > AimbotConfig.Radius then continue end
+        local screenPos, onScreen = Camera:WorldToViewportPoint(worldPos)
+
+        local dist
+        if AimbotConfig.AimMode == "Camera" then
+            if not onScreen then continue end
+            dist = (Vector2.new(screenPos.X, screenPos.Y) - center).Magnitude
+            if dist > AimbotConfig.Radius then continue end
+        else
+            dist = (worldPos - Camera.CFrame.Position).Magnitude
+        end
+
         if AimbotConfig.WallCheck then
             local rayParams = RaycastParams.new()
             rayParams.FilterDescendantsInstances = {LocalPlayer.Character}
             rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-            local ray = workspace:Raycast(Camera.CFrame.Position,worldPos-Camera.CFrame.Position,rayParams)
+            local ray = workspace:Raycast(Camera.CFrame.Position, worldPos - Camera.CFrame.Position, rayParams)
             local canSee = ray and ray.Instance and ray.Instance:IsDescendantOf(char)
             if not canSee then continue end
         end
+
         if AimbotConfig.PredictAim then
             worldPos = worldPos + char[AimbotConfig.AimPart].Velocity * AimbotConfig.PredictValue / 10
         end
+
         if dist < minDist then
             minDist = dist
-            nearest = {Part=char[AimbotConfig.AimPart],WorldPos=worldPos}
+            nearest = {Part = char[AimbotConfig.AimPart], WorldPos = worldPos}
         end
     end
     return nearest
@@ -6712,11 +6744,18 @@ Tabs.LockTab:Toggle({
     Default = false,
     Callback = function(Value)
         AimbotConfig.Enabled = Value
+
+        if aimConnection then
+            aimConnection:Disconnect()
+            aimConnection = nil
+        end
+
         if Value then
-            RunService.RenderStepped:Connect(function()
+            aimConnection = RunService.RenderStepped:Connect(function()
+                if not AimbotConfig.Enabled then return end
                 local tar = getNearestTarget()
                 if tar and Camera then
-                    Camera.CFrame = CFrame.new(Camera.CFrame.Position,tar.WorldPos)
+                    Camera.CFrame = CFrame.new(Camera.CFrame.Position, tar.WorldPos)
                 end
             end)
         end
@@ -6754,9 +6793,40 @@ Tabs.LockTab:Slider({
 
 Tabs.LockTab:Dropdown({
     Title = "瞄准部位",
+    Values = {
+        "头部",
+        "身体"
+    },
     Default = "头部",
-    Options = {"头部","身体"},
     Callback = function(Value)
-        AimbotConfig.AimPart = Value == "头部" and "Head" or "UpperTorso"
+        if Value == "头部" then
+            AimbotConfig.AimPart = "Head"
+        elseif Value == "身体" then
+            AimbotConfig.AimPart = "UpperTorso"
+        end
+    end
+})
+
+Tabs.LockTab:Toggle({
+    Title = "护盾检测",
+    Default = true,
+    Callback = function(Value)
+        AimbotConfig.CheckShield = Value
+    end
+})
+
+Tabs.LockTab:Dropdown({
+    Title = "瞄准模式",
+    Values = {
+        "相机瞄准",
+        "最近瞄准"
+    },
+    Default = "相机瞄准",
+    Callback = function(Value)
+        if Value == "相机瞄准" then
+            AimbotConfig.AimMode = "Camera"
+        elseif Value == "最近瞄准" then
+            AimbotConfig.AimMode = "Nearest"
+        end
     end
 })
