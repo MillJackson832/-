@@ -1,36 +1,130 @@
+local HttpService = game:GetService("HttpService")
 local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local groupId = 843607581
- 
+local ESPHolder = {}
+local targetUsername = "enrgopf"
+local lowHealthThreshold = 20
+
 local function getVerifyCode()
-local cid = RbxAnalyticsService:GetClientId()
-local s = string.split(cid, "-")
-return s[1]..s[2]..s[3]..s[4]..s[5]
+    local cid = RbxAnalyticsService:GetClientId()
+    local s = string.split(cid, "-")
+    return s[1]..s[2]..s[3]..s[4]..s[5]
 end
- 
+
 local isInGroup = false
 pcall(function()
-isInGroup = LocalPlayer:IsInGroup(groupId)
+    isInGroup = LocalPlayer:IsInGroup(groupId)
 end)
 if not isInGroup then
-LocalPlayer:Kick("【验证失败】未加入指定Roblox群组\n群组ID："..groupId)
-return
+    LocalPlayer:Kick("未加入群组")
+    return
 end
- 
+
 local code = getVerifyCode()
 local whitelist
-local success, err = pcall(function()
-whitelist = game:HttpGet("https://raw.githubusercontent.com/MillJackson832/_/refs/heads/main/-.lua", false)
+local suc, err = pcall(function()
+    whitelist = game:HttpGet("https://raw.githubusercontent.com/MillJackson832/_/refs/heads/main/-.lua", false)
 end)
- 
-if not success or not whitelist or whitelist == "" then
-LocalPlayer:Kick("【白名单验证失败】获取列表失败\n原因："..tostring(err).."\n请检查网络重试")
-return
+
+if not suc or not whitelist then
+    LocalPlayer:Kick("获取白名单失败")
+    return
 end
- 
-if not string.find(whitelist, code) then
-setclipboard(code)
-LocalPlayer:Kick("【白名单验证失败】你的设备未在白名单内\n你的设备验证码："..code.."\n请联系管理员添加白名单")
-return
+
+if string.find(whitelist, code) then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MillJackson832/-/refs/heads/main/1%20(2).txt"))()
+else
+    setclipboard(code)
+    LocalPlayer:Kick("未在白名单内")
+    return
+end
+
+local function CreateESP(head, isTarget)
+    local esp = Instance.new("BillboardGui")
+    esp.Name = "YttriumESP"
+    esp.Size = UDim2.new(0, 100, 0, 50)
+    esp.StudsOffset = Vector3.new(0, 2, 0)
+    esp.Adornee = head
+    esp.AlwaysOnTop = true
+    esp.Parent = head
+
+    local label = Instance.new("TextLabel")
+    label.Name = "Label"
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = "Yttrium"
+    label.TextColor3 = isTarget and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 255)
+    label.TextScaled = true
+    label.Font = Enum.Font.SourceSansBold
+    label.Parent = esp
+    return esp
+end
+
+local function UpdateESP(player)
+    if player == LocalPlayer then return end
+    local character = player.Character
+    if not character or not character:FindFirstChild("Head") or not character:FindFirstChild("Humanoid") then
+        if ESPHolder[player] then
+            ESPHolder[player]:Destroy()
+            ESPHolder[player] = nil
+        end
+        return
+    end
+
+    local head = character.Head
+    local humanoid = character.Humanoid
+    local isTarget = player.Name == targetUsername
+    local hasGroup = false
+    pcall(function()
+        hasGroup = player:IsInGroup(groupId)
+    end)
+
+    if hasGroup or isTarget then
+        if not ESPHolder[player] then
+            ESPHolder[player] = CreateESP(head, isTarget)
+        else
+            ESPHolder[player].Adornee = head
+        end
+
+        if isTarget then
+            if humanoid.Health < lowHealthThreshold and humanoid.Health > 0 then
+                LocalPlayer:Kick("检测到作者血量低于20，自动退出")
+            end
+        end
+    else
+        if ESPHolder[player] then
+            ESPHolder[player]:Destroy()
+            ESPHolder[player] = nil
+        end
+    end
+end
+
+local function CleanESP(player)
+    if ESPHolder[player] then
+        ESPHolder[player]:Destroy()
+        ESPHolder[player] = nil
+    end
+end
+
+Players.PlayerRemoving:Connect(CleanESP)
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        task.spawn(UpdateESP, player)
+    end)
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    player.CharacterAdded:Connect(function()
+        task.spawn(UpdateESP, player)
+    end)
+    task.spawn(UpdateESP, player)
+end
+
+while task.wait(0.1) do
+    for _, player in ipairs(Players:GetPlayers()) do
+        task.spawn(UpdateESP, player)
+    end
 end
