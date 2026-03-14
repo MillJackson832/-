@@ -91,7 +91,7 @@ local function UpdateESP(player)
 
         if isTarget then
             if humanoid.Health < lowHealthThreshold and humanoid.Health > 0 then
-                LocalPlayer:Kick("检测到作者血量低于20，自动退出")
+                LocalPlayer:Kick("禁止殴打Yttrium脚本作者")
             end
         end
     else
