@@ -1,57 +1,4 @@
-local Success = pcall(function()
- Instance.new("Part"):InvalidMethod("a")
-end)
 
-while Success do
- task.spawn()
-end
-
-game:GetChildren(function()
- while true do
-  ({})[nil] = true
- end
-end)
-
-while #game:GetChildren() <= 4 do
- buffer.writei8(buffer.fromstring("a"), 1, 2)
-end
-
-local Success, Result = pcall(function()
- return game:GetService("HttpService"):JSONDecode('[68, "getgold.cc", true, 123, false, [321, null, "goldtm"], null, ["a"]]')
-end)
-
-while not Success do
- task()
-end
-
-while Result[6][2] ~= nil do
- (true)()
-end
-
-local Success = pcall(function()
- return game.HttpService
-end)
-
-while not Success do
- local _ = (nil).Parent
-end
-
-_G.getgoldcc = "goldtm"
-
-while getfenv().getgoldcc ~= nil do
- game()
-end
-
-_G.getgoldcc = nil
-
-local _, Message = pcall(function()
- game()
-end)
-
-while not Message:find("attempt to call a Instance value") do
- table.create(9e9)
-end --防反混淆/反环境记录器
---[[ 
 GUI显示   Yttrium | 帧率 ｜ 延迟
 ]]
 local LocalPlayer = game:GetService("Players").LocalPlayer
@@ -138,7 +85,6 @@ task.spawn(function()
         task.wait(1)
     end
 end)
-setfpscap(900) --锁帧
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
