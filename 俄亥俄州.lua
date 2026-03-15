@@ -1,6 +1,4 @@
 
-GUI显示   Yttrium | 帧率 ｜ 延迟
-]]
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local PlayerGui = LocalPlayer.PlayerGui
 
